@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="theme-color" content="#172925" />
+    <title>Kochi — Afterglow</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <canvas
+      id="world"
+      aria-label="Playable 3D miniature Kochi. WASD to move, Shift to run, Space to jump, E to enter vehicles."
+      tabindex="0"
+    ></canvas>
+    <div id="vignette"></div>
+    <div id="loading">
+      <span class="tiny">KERALA, INDIA</span>
+      <h1>KOCHI<span class="dot">.</span></h1>
+      <div class="loading-track"><i></i></div>
+      <p id="load-status">Gathering the afternoon light…</p>
+    </div>
+    <header id="header">
+      <a class="wordmark" href="#" aria-label="Kochi Afterglow home"
+        >KOCHI<span class="dot">.</span><small>AFTERGLOW</small></a
+      >
+      <div class="header-right">
+        <div class="weather">
+          <span class="sun-icon">☀</span
+          ><span>16:42<small>30° C · KERALA</small></span>
+        </div>
+        <span class="header-divider"></span
+        ><button
+          id="audio"
+          class="icon-button"
+          aria-label="Enable ambient sound"
+          title="Ambient sound"
+        >
+          ♫<i class="sound-off"></i></button
+        ><button
+          id="quality"
+          class="icon-button quality"
+          aria-label="Switch graphics quality"
+          title="Graphics quality"
+        >
+          HQ</button
+        ><button
+          id="map-button"
+          class="outline-button"
+          aria-label="Open city map"
+        >
+          <span class="map-icon">⌘</span> CITY MAP <kbd>M</kbd>
+        </button>
+      </div>
+    </header>
+    <section id="intro" class="hidden">
+      <div class="intro-copy">
+        <div class="eyebrow"><span></span> A MINIATURE OPEN WORLD</div>
+        <h1>KOCHI<span class="dot">.</span><br /><em>Afterglow</em></h1>
+        <p>
+          Warm roads. Familiar corners.<br />A little Kochi, yours to explore.
+        </p>
+        <button id="start" class="primary-button">
+          Explore Kochi <span>↗</span>
+        </button>
+        <div class="intro-help">WALK. DRIVE. GET A LITTLE LOST.</div>
+      </div>
+      <div class="intro-coordinate">
+        9.9312° N &nbsp; 76.2673° E <span>THE MALABAR COAST</span>
+      </div>
+      <div class="intro-caption">
+        <span class="live-dot"></span> LIVE IN KOCHI <b>FORUM · MARADU</b>
+      </div>
+    </section>
+    <main id="hud" class="hidden">
+      <div id="journey">
+        <div class="eyebrow">THE KOCHI LOOP</div>
+        <div class="journey-line">
+          <span id="journey-text">Find your first familiar place</span
+          ><b id="discovered-count">0 / 6</b>
+        </div>
+        <div id="journey-progress"></div>
+      </div>
+      <div id="landmark-label" class="hidden"></div>
+      <div id="toast" class="hidden">
+        <span class="tiny">A FAMILIAR CORNER</span
+        ><strong id="toast-title"></strong><span id="toast-sub"></span>
+      </div>
+      <div class="bottom-left">
+        <div id="mini-wrap">
+          <canvas
+            id="minimap"
+            width="480"
+            height="400"
+            aria-label="Local street map"
+          ></canvas
+          ><span class="map-north">N ↑</span
+          ><button id="mini-expand" aria-label="Expand city map">↗</button>
+          <div class="map-scale">MINIATURE KOCHI</div>
+        </div>
+        <div class="location">
+          <span class="location-rule"></span>
+          <div>
+            <span id="location-ml">മരട്</span>
+            <h2 id="location-name">MARADU</h2>
+            <p id="street-name">Forum frontage road</p>
+          </div>
+        </div>
+      </div>
+      <div id="interaction" class="hidden">
+        <kbd>E</kbd><span id="interaction-text">Enter vehicle</span
+        ><span class="interaction-arrow">↗</span>
+      </div>
+      <div class="bottom-right">
+        <div id="speedometer" class="hidden">
+          <div>
+            <span id="gear">N</span><span id="speed">000</span
+            ><span class="speed-unit">KM/H</span>
+          </div>
+          <div class="speed-track"><i id="speed-bar"></i></div>
+          <span id="vehicle-name">Kochi hatchback</span>
+        </div>
+        <div class="control-line" id="controls">
+          <span><kbd>W A S D</kbd> Walk</span><span><kbd>SHIFT</kbd> Run</span
+          ><span><kbd>SPACE</kbd> Jump</span>
+        </div>
+        <div class="secondary-controls">
+          <span>Mouse · Look</span><span><kbd>H</kbd> Help</span
+          ><span><kbd>P</kbd> Photo</span>
+        </div>
+      </div>
+      <div id="cursor-hint">
+        Click the world to look around <span>ESC releases the mouse</span>
+      </div>
+    </main>
+    <div id="photo-hint" class="hidden">
+      PHOTO MODE <span>Move the mouse to compose · P to return</span>
+    </div>
+    <section id="map-panel" class="overlay hidden" aria-label="City map">
+      <div class="map-sheet">
+        <div class="panel-header">
+          <div>
+            <span class="eyebrow">YOUR POCKET CITY</span>
+            <h2>The Kochi loop<span class="dot">.</span></h2>
+          </div>
+          <button
+            class="close-button"
+            id="close-map"
+            aria-label="Close city map"
+          >
+            ×
+          </button>
+        </div>
+        <div class="map-content">
+          <div class="big-map-wrap">
+            <canvas
+              id="big-map"
+              width="800"
+              height="1000"
+              aria-label="Map of the compressed Kochi corridor"
+            ></canvas
+            ><span class="map-note"
+              >N ↑<br /><small
+                >Distances compressed for exploration</small
+              ></span
+            >
+            <div class="map-legend"><i></i> ROAD <i></i> METRO <i></i> YOU</div>
+          </div>
+          <div class="destinations">
+            <span class="tiny">SIX PLACES. ONE AFTERNOON.</span>
+            <div id="destinations"></div>
+            <p class="travel-note">
+              Choose a place to visit instantly.<br />Every destination is also
+              connected by road.
+            </p>
+            <button id="credits-button" class="text-button">
+              Field notes & controls <span>↗</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      id="help-panel"
+      class="overlay hidden"
+      aria-label="Field notes and controls"
+    >
+      <div class="help-sheet">
+        <div class="panel-header">
+          <div>
+            <span class="eyebrow">FIELD NOTES</span>
+            <h2>Make yourself at home<span class="dot">.</span></h2>
+          </div>
+          <button id="close-help" class="close-button" aria-label="Close help">
+            ×
+          </button>
+        </div>
+        <div class="help-columns">
+          <div>
+            <h3>ON FOOT</h3>
+            <p><kbd>W A S D</kbd> Walk <kbd>SHIFT</kbd> Run</p>
+            <p><kbd>SPACE</kbd> Jump <kbd>E</kbd> Enter a nearby vehicle</p>
+            <h3>BEHIND THE WHEEL</h3>
+            <p><kbd>W</kbd> Accelerate <kbd>S</kbd> Brake / reverse</p>
+            <p><kbd>A D</kbd> Steer <kbd>SPACE</kbd> Handbrake</p>
+            <p><kbd>E</kbd> Exit when stopped <kbd>B</kbd> Horn</p>
+            <h3>EXPLORING</h3>
+            <p>Click the world for mouse look. <kbd>ESC</kbd> releases it.</p>
+            <p>
+              <kbd>M</kbd> City map <kbd>P</kbd> Photo mode <kbd>R</kbd> Recover
+            </p>
+            <p>
+              Drive on the left. The central ramps lead onto the flyovers; the
+              service roads pass underneath.
+            </p>
+            <button id="recover" class="outline-button">
+              Return to Forum forecourt ↗
+            </button>
+          </div>
+          <div>
+            <h3>A LITTLE KOCHI</h3>
+            <p>
+              A playable interpretation of the
+              Kundannoor–Vyttila–Kaloor–Edappally corridor, compressed into a
+              short afternoon drive.
+            </p>
+            <p>
+              Landmark exteriors follow public photographs and official location
+              references. Brototype’s exterior is approximate. Secondary streets
+              and connecting distances are authored for play.
+            </p>
+            <h3>REFERENCES & MATERIALS</h3>
+            <p>
+              <a
+                href="https://www.forummalls.in/pages/our-story"
+                target="_blank"
+                rel="noreferrer"
+                >Forum Malls ↗</a
+              >
+              ·
+              <a
+                href="https://www.kochi.lulumall.in/about-us-2/"
+                target="_blank"
+                rel="noreferrer"
+                >LuLu Kochi ↗</a
+              >
+              ·
+              <a
+                href="https://www.brototype.com/"
+                target="_blank"
+                rel="noreferrer"
+                >Brototype ↗</a
+              >
+              ·
+              <a
+                href="https://kochimetro.org/metro-stations/"
+                target="_blank"
+                rel="noreferrer"
+                >Kochi Metro ↗</a
+              >
+            </p>
+            <p>
+              Geographic reference: ©
+              <a
+                href="https://www.openstreetmap.org/copyright"
+                target="_blank"
+                rel="noreferrer"
+                >OpenStreetMap contributors</a
+              >. Sky and ground textures:
+              <a
+                href="https://polyhaven.com/license"
+                target="_blank"
+                rel="noreferrer"
+                >Poly Haven, CC0</a
+              >. All game geometry is custom. Ambient audio is synthesized.
+            </p>
+            <p class="fine-print">
+              An independent exploration prototype. No affiliation with the
+              featured places or Grand Theft Auto.
+            </p>
+            <div id="diagnostics-wrap">
+              <button id="diagnostics" class="text-button">
+                Run gameplay checks ↗
+              </button>
+              <pre id="diagnostics-result"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div id="fatal-error" class="hidden"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
